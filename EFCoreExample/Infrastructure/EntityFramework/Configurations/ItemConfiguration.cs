@@ -9,7 +9,7 @@ namespace EFCoreExample.Infrastructure.EntityFramework.Configurations
         public void Configure(EntityTypeBuilder<Item> entityBuilder)
         {
             entityBuilder.HasKey(x => x.Id);
-            entityBuilder.Property(x => x.Price).HasPrecision(5, 2);
+            entityBuilder.Property(x => x.Price).HasPrecision(18, 2);
             
             //This is option since the property 'title' is already declared as string (without ?) in the model.
             //EF Core will already treat this column as required without the following line
