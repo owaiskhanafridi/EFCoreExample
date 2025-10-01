@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace EFCoreExample.Controllers
 {
     [ApiController]
-    [Route("/api")]
+    [Route("/api/order")]
     public class OrderController : ControllerBase
     {
         private readonly OrderService _svc;
