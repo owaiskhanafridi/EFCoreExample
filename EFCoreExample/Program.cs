@@ -1,4 +1,5 @@
 using EFCoreExample.Infrastructure;
+using EFCoreExample.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ builder.Services.AddDbContext<AmazonDbContext>(options =>
 });
 
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<OrderService>();
 
 
 var app = builder.Build();
