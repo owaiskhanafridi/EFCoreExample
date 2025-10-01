@@ -14,6 +14,11 @@ namespace EFCoreExample.Infrastructure.EntityFramework.Configurations
             //This is option since the property 'title' is already declared as string (without ?) in the model.
             //EF Core will already treat this column as required without the following line
             entityBuilder.Property(x => x.Title).IsRequired();
+
+            entityBuilder.HasMany(x => x.OrderItems)
+                .WithOne(x => x.Item)
+                .HasForeignKey(x => x.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

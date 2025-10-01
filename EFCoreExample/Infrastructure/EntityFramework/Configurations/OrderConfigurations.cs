@@ -12,7 +12,11 @@ namespace EFCoreExample.Infrastructure.EntityFramework.Configurations
             entityBuilder.Property(x => x.Amount).HasPrecision(18, 2);
             entityBuilder.Property(x => x.TotalAmount).HasPrecision(18, 2);
             entityBuilder.Property(x => x.Tax).HasPrecision(18, 2);
-
+            
+            entityBuilder.HasMany(x => x.OrderItems)
+                .WithOne(x => x.Order)
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

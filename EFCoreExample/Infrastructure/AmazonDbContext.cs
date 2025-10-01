@@ -7,8 +7,10 @@ namespace EFCoreExample.Infrastructure
     {
         public AmazonDbContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Item> Items { get; set; }
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<Item> Items => Set<Item>();
+
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
