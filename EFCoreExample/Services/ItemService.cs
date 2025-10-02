@@ -8,6 +8,7 @@ namespace EFCoreExample.Services
     //private readonly IHistoryRepository<Order> _bundles;
     public class ItemService
     {
+        //We dont need separate uow anymore since the dbContext already provides one
         private readonly IUnitOfWork _uow;
         private readonly AmazonDbContext _dbContext;
 
