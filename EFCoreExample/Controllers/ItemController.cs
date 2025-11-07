@@ -1,4 +1,5 @@
-﻿using EFCoreExample.Models;
+﻿using EFCoreExample.Commands;
+using EFCoreExample.Models;
 using EFCoreExample.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
@@ -13,17 +14,17 @@ namespace EFCoreExample.Controllers
         public ItemController(ItemService svc) => _svc = svc;
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> CreateItem(Item itemDto, CancellationToken ct)
+        public async Task<ActionResult<Guid>> CreateItem(CreateItemCommand item, CancellationToken ct)
         {
-            var item = await _svc.CreateItemAsync(itemDto, ct);
+            var entity = await _svc.CreateItemAsync(item, ct);
 
-            return CreatedAtAction(nameof(GetById), new { item.Id }, item);
+            return CreatedAtAction(nameof(GetById), new { entity.Id }, item);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Item>> GetById(Guid id, CancellationToken ct)
         {
-            var item = await _svc.GetItemAsync(id, ct);
+            var item = await _svc.GetItemAsync(id);
             return item is null ? NotFound() : Ok(item);
         }
 

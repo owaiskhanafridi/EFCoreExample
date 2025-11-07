@@ -1,4 +1,6 @@
-﻿using EFCoreExample.Models;
+﻿using EFCoreExample.Commands;
+using EFCoreExample.Dtos;
+using EFCoreExample.Models;
 using EFCoreExample.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,18 +14,27 @@ namespace EFCoreExample.Controllers
         public OrderController(OrderService svc) => _svc = svc;
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> CreateOrder(Order orderdto, CancellationToken ct)
+        public async Task<ActionResult<Guid>> CreateOrder(CreateOrderCommand cmd, CancellationToken ct)
         {
-            var id = await _svc.CreateOrderAsync(orderdto, ct);
+            var id = await _svc.CreateOrderAsync(cmd, ct);
 
             return CreatedAtAction(nameof(GetById), new { id }, id);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<Order>> GetById(Guid id, CancellationToken ct)
+        public async Task<ActionResult<OrderDto>> GetById(Guid id, CancellationToken ct)
         {
-            var order = await _svc.GetOrderAsync(id, ct);
-            return order is null ? NotFound() : Ok(order);
+
+            try
+            {
+                var order = await _svc.GetOrderAsync(id, ct);
+                return order is null ? NotFound() : Ok(order);
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }

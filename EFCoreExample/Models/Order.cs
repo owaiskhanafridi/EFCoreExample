@@ -6,7 +6,7 @@ namespace EFCoreExample.Models
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public decimal Tax { get; set; }
+        public decimal Tax { get; set; } = 2;
         public decimal Amount { get; set; }
         public decimal TotalAmount { get; set; }
 

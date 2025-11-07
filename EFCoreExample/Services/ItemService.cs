@@ -1,4 +1,6 @@
-﻿using EFCoreExample.Infrastructure;
+﻿using EFCoreExample.Commands;
+using EFCoreExample.Exceptions;
+using EFCoreExample.Infrastructure;
 using EFCoreExample.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -19,21 +21,31 @@ namespace EFCoreExample.Services
         }
 
         //TODO: Create a record dto 'OrderDto' insetad of using actual entity model Order
-        public async Task<Item> CreateItemAsync(Item itemDto, CancellationToken ct)
+        public async Task<Item> CreateItemAsync(CreateItemCommand itemDto, CancellationToken ct)
         {
-            var entity = new Order
+            var itemExists = _dbContext.Items.SingleOrDefault(x => x.Title == itemDto.title);
+
+            if (itemExists != null)
+                throw new DuplicateResourceException( $"Item with title {itemDto.title} already exist. " +
+                    $"Please select a different title name");
+            if (itemDto.price < 0)
+                throw new NegativePriceException("Price cannot be lower than zero");
+
+            var entity = new Item
             {
+                Title = itemDto.title,
+                Price = itemDto.price
                 //TODO: after creating an actual OrderDto, Convert dto to model here
             };
 
-            await _dbContext.Items.AddAsync(itemDto);
+            await _dbContext.Items.AddAsync(entity);
             await _dbContext.SaveChangesAsync();
             //await _uow.SaveChangesAsync(ct);
-            return itemDto;
+            return entity;
         }
 
-        public Task<Item?> GetItemAsync(Guid id, CancellationToken ct)
-            => _dbContext.Items.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id, ct);
+        public Task<Item?> GetItemAsync(Guid id)
+            => _dbContext.Items.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id);
 
         public Task<List<Item>> GetAllItemAsync(CancellationToken ct)
             => _dbContext.Items.AsNoTracking().ToListAsync(ct);
