@@ -10,7 +10,7 @@ namespace EFCoreExample.Infrastructure.EntityFramework.Configurations
         {
             entityBuilder.HasKey(x => x.Id);
             entityBuilder.Property(x => x.Price).HasPrecision(18, 2);
-            
+            entityBuilder.HasIndex(x => x.Title).IsUnique();
             //This is option since the property 'title' is already declared as string (without ?) in the model.
             //EF Core will already treat this column as required without the following line
             entityBuilder.Property(x => x.Title).IsRequired();
