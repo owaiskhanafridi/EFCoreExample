@@ -69,6 +69,7 @@ namespace EFCoreExample.Controllers
         }
 
         [HttpGet("{title}")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<Item>> GetByItemTitle(string title, CancellationToken ct)
         {
             var item = await _svc.GetItemByTitleAsync(title);
