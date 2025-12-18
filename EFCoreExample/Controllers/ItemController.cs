@@ -2,7 +2,9 @@
 using EFCoreExample.Models;
 using EFCoreExample.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq.Expressions;
+using Microsoft.AspNetCore.OutputCaching;
+using System.Text;
+using System.Text.Json;
 
 namespace EFCoreExample.Controllers
 {
@@ -11,7 +13,12 @@ namespace EFCoreExample.Controllers
     public class ItemController : ControllerBase
     {
         private readonly ItemService _svc;
-        public ItemController(ItemService svc) => _svc = svc;
+        private readonly ILogger<ItemController> _logger;
+        public ItemController(ItemService svc, ILogger<ItemController> logger)
+        {
+            _svc = svc;
+            _logger = logger;
+        }
 
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateItem(CreateItemCommand item, CancellationToken ct)
@@ -29,8 +36,11 @@ namespace EFCoreExample.Controllers
         }
 
         [HttpGet]
+        [OutputCache]
         public async Task<ActionResult<List<Item>>> GetAllItems(CancellationToken ct)
         {
+            _logger.LogInformation($"GetAllItems Method Called at {DateTime.Now}");
+            await Task.Delay(3000);
             var items = await _svc.GetAllItemAsync(ct);
             return Ok(items);
         }
