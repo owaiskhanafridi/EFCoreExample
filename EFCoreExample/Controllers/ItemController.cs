@@ -3,6 +3,7 @@ using EFCoreExample.Models;
 using EFCoreExample.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Text;
 using System.Text.Json;
 
@@ -29,6 +30,8 @@ namespace EFCoreExample.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [EnableRateLimiting("fixed")]
+
         public async Task<ActionResult<Item>> GetById(Guid id, CancellationToken ct)
         {
             var item = await _svc.GetItemAsync(id);
