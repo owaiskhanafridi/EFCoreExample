@@ -32,6 +32,12 @@ namespace EFCoreExample.Controllers
             return CreatedAtAction(nameof(GetById), new { entity.Id }, item);
         }
 
+        /// <summary>
+        /// Get Item by Id
+        /// </summary>
+        /// <param name="id"> a unique identified (guid)</param>
+        /// <param name="ct"></param>
+        /// <returns>item</returns>
         [HttpGet("{id:guid}")]
         [EnableRateLimiting("fixed")]
 
@@ -41,8 +47,18 @@ namespace EFCoreExample.Controllers
             return item is null ? NotFound() : Ok(item);
         }
 
+        /// <summary>Gets all items.</summary>
+        /// <remarks>Returns a paged list of items.</remarks>
+        /// <response code="200">Items returned successfully.</response>
+        /// <response code="404">Items not found.</response>
+        /// <response code="500">Something went wrong.</response>
+
         [HttpGet]
         [OutputCache]
+        [ProducesResponseType(typeof(Item), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
         public async Task<ActionResult<List<Item>>> GetAllItems(CancellationToken ct)
         {
             _logger.LogInformation($"GetAllItems Method Called at {DateTime.Now}");
