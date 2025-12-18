@@ -10,7 +10,10 @@ using System.Text.Json;
 namespace EFCoreExample.Controllers
 {
     [ApiController]
-    [Route("/api/item")]
+    [Route("/api/v1/item")]
+    //[ApiVersion("1.0")]
+    //[ApiVersion("2.2")]
+
     public class ItemController : ControllerBase
     {
         private readonly ItemService _svc;

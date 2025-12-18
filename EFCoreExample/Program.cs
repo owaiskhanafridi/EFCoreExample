@@ -1,6 +1,8 @@
-using EFCoreExample.Infrastructure;
+﻿using EFCoreExample.Infrastructure;
 using EFCoreExample.Middlewares;
 using EFCoreExample.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -55,7 +57,16 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
 });
-    
+
+//builder.Services.AddApiVersioning(o =>
+// {
+//     o.ApiVersionReader = new HeaderApiVersionReader("RM-Api-Version");
+     
+//     //o.DefaultApiVersion = new ApiVersion(1, 0);
+//     //o.AssumeDefaultVersionWhenUnspecified = true;   // ✅ prevents the error
+//     o.ReportApiVersions = true;
+// });
+
 var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
