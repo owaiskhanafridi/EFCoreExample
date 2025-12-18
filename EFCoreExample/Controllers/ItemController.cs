@@ -1,4 +1,5 @@
 ﻿using EFCoreExample.Commands;
+using EFCoreExample.CustomModelBinders;
 using EFCoreExample.Models;
 using EFCoreExample.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,16 @@ namespace EFCoreExample.Controllers
         {
             var item = await _svc.GetItemByTitleAsync(title);
             return item is null ? NotFound() : Ok(item);
+        }
+
+        [HttpGet("after-date")]
+        public async Task<ActionResult<List<Item>>> GetItemsAddedAfter(
+            [ModelBinder(BinderType = typeof(DateOnlyYyyyMmDdBinder))] DateOnly date, 
+            CancellationToken ct)
+        {
+            DateTime dt = date.ToDateTime(TimeOnly.MinValue);
+            var items = await _svc.GetItemsAddedAfter(dt);
+            return Ok(items);
         }
     }
 }

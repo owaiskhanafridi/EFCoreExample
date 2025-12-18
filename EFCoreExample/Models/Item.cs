@@ -15,6 +15,8 @@
         /// </summary>
         public decimal Price { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+
         /// <summary>
         /// Order Items (can it be described here ?)
         /// </summary>

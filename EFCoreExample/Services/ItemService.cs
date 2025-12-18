@@ -34,7 +34,9 @@ namespace EFCoreExample.Services
             var entity = new Item
             {
                 Title = itemDto.title,
-                Price = itemDto.price
+                Price = itemDto.price,
+                CreatedAt = itemDto.createdAt
+                
                 //TODO: after creating an actual OrderDto, Convert dto to model here
             };
 
@@ -53,6 +55,9 @@ namespace EFCoreExample.Services
 
         public Task<List<Item>> GetAllItemAsync(CancellationToken ct)
             => _dbContext.Items.AsNoTracking().ToListAsync(ct);
+
+        public Task<List<Item>> GetItemsAddedAfter(DateTime date)
+            => _dbContext.Items.AsNoTracking().Where(x => x.CreatedAt >= date).ToListAsync();
     }
 
 }
