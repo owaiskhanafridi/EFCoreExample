@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
+using Serilog;
 using System.Reflection;
 using System.Threading.RateLimiting;
 
@@ -67,13 +68,23 @@ builder.Services.AddRateLimiter(options =>
 //builder.Services.AddApiVersioning(o =>
 // {
 //     o.ApiVersionReader = new HeaderApiVersionReader("RM-Api-Version");
-     
+
 //     //o.DefaultApiVersion = new ApiVersion(1, 0);
 //     //o.AssumeDefaultVersionWhenUnspecified = true;   // ✅ prevents the error
 //     o.ReportApiVersions = true;
 // });
 
+builder.Host.UseSerilog((ctx, services, lc) =>
+    lc.ReadFrom.Configuration(ctx.Configuration)
+      .ReadFrom.Services(services)
+      .Enrich.FromLogContext()
+      .WriteTo.Console()
+);
+
+
 var app = builder.Build();
+Log.Information("Serilog is wired up");
+
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
@@ -96,6 +107,23 @@ app.UseAuthorization();
 
 app.UseOutputCache();
 app.UseRateLimiter();
+app.UseSerilogRequestLogging();
+
+//Use the following in place of app.UseSerilogRequestLogging() to use without adding Serilog
+//app.Use(async (ctx, next) =>
+//{
+//    var path = ctx.Request.Path;
+//    var method = ctx.Request.Method;
+
+//    await next();
+
+//    var status = ctx.Response.StatusCode;
+//    ctx.RequestServices.GetRequiredService<ILoggerFactory>()
+//        .CreateLogger("Http")
+//        .LogInformation("HTTP {Method} {Path} -> {Status}", method, path, status);
+//});
+
+
 app.MapControllers();
 
 app.Run();
