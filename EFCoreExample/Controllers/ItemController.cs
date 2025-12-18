@@ -50,5 +50,12 @@ namespace EFCoreExample.Controllers
             var items = await _svc.GetAllItemAsync(ct);
             return Ok(items);
         }
+
+        [HttpGet("{title}")]
+        public async Task<ActionResult<Item>> GetByItemTitle(string title, CancellationToken ct)
+        {
+            var item = await _svc.GetItemByTitleAsync(title);
+            return item is null ? NotFound() : Ok(item);
+        }
     }
 }

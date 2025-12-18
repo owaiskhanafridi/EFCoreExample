@@ -47,6 +47,10 @@ namespace EFCoreExample.Services
         public Task<Item?> GetItemAsync(Guid id)
             => _dbContext.Items.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id);
 
+        public Task<Item?> GetItemByTitleAsync(string title)
+    => _dbContext.Items.AsNoTracking().FirstOrDefaultAsync(o => o.Title == title);
+
+
         public Task<List<Item>> GetAllItemAsync(CancellationToken ct)
             => _dbContext.Items.AsNoTracking().ToListAsync(ct);
     }
