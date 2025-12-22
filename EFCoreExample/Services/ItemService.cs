@@ -4,6 +4,7 @@ using EFCoreExample.Infrastructure;
 using EFCoreExample.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using System.Linq.Expressions;
 
 namespace EFCoreExample.Services
 {
@@ -23,27 +24,42 @@ namespace EFCoreExample.Services
         //TODO: Create a record dto 'OrderDto' insetad of using actual entity model Order
         public async Task<Item> CreateItemAsync(CreateItemCommand itemDto, CancellationToken ct)
         {
-            var itemExists = _dbContext.Items.SingleOrDefault(x => x.Title == itemDto.title);
 
-            if (itemExists != null)
-                throw new DuplicateResourceException( $"Item with title {itemDto.title} already exist. " +
-                    $"Please select a different title name");
-            if (itemDto.price < 0)
-                throw new NegativePriceException("Price cannot be lower than zero");
+            await using var tx = _dbContext.Database.BeginTransaction();
 
-            var entity = new Item
+            try
             {
-                Title = itemDto.title,
-                Price = itemDto.price,
-                CreatedAt = itemDto.createdAt
-                
-                //TODO: after creating an actual OrderDto, Convert dto to model here
-            };
 
-            await _dbContext.Items.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
-            //await _uow.SaveChangesAsync(ct);
-            return entity;
+                var itemExists = _dbContext.Items.SingleOrDefault(x => x.Title == itemDto.title);
+
+                if (itemExists != null)
+                    throw new DuplicateResourceException($"Item with title {itemDto.title} already exist. " +
+                        $"Please select a different title name");
+                if (itemDto.price < 0)
+                    throw new NegativePriceException("Price cannot be lower than zero");
+
+                var entity = new Item
+                {
+                    Title = itemDto.title,
+                    Price = itemDto.price,
+                    CreatedAt = itemDto.createdAt
+
+                    //TODO: after creating an actual OrderDto, Convert dto to model here
+                };
+
+                await _dbContext.Items.AddAsync(entity);
+                await _dbContext.SaveChangesAsync();
+                //await _uow.SaveChangesAsync(ct);
+
+                await tx.CommitAsync();
+                return entity;
+
+            }
+            catch
+            {
+                await tx.RollbackAsync();
+                return null;
+            }
         }
 
         public Task<Item?> GetItemAsync(Guid id)
