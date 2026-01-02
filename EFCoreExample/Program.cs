@@ -1,4 +1,5 @@
 ﻿using EFCoreExample.Infrastructure;
+using EFCoreExample.Interceptors;
 using EFCoreExample.Middlewares;
 using EFCoreExample.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,7 @@ builder.Services.AddDbContext<AmazonDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"),
         sql => sql.EnableRetryOnFailure());
+   // .AddInterceptors(new SqlCommandLoggerInterceptor());
 });
 
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
