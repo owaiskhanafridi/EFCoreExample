@@ -19,10 +19,19 @@ namespace EFCoreExample.Controllers
     {
         private readonly ItemService _svc;
         private readonly ILogger<ItemController> _logger;
-        public ItemController(ItemService svc, ILogger<ItemController> logger)
+        private readonly TestService _testService;
+        public ItemController(ItemService svc, ILogger<ItemController> logger, TestService tService)
         {
             _svc = svc;
             _logger = logger;
+            _testService = tService;
+        }
+
+        [HttpGet("test-method")]
+        public string TestMethod()
+        {
+            var result = _testService.DelegatePractice();
+            return result.ToString();
         }
 
         [HttpPost]

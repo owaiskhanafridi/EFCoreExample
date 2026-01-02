@@ -48,6 +48,7 @@ builder.Services.AddDbContext<AmazonDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork, EfUnitOfWork>();
 builder.Services.AddScoped<ItemService>();
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<TestService>();
 
 builder.Services.AddRateLimiter(options =>
 {
